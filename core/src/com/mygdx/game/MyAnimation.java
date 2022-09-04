@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,6 +10,7 @@ public class MyAnimation {
     private TextureRegion[][] regions0;
     private TextureRegion[] walkRegions;
     private Animation<TextureRegion> animation;
+    private float time;
 
     public MyAnimation(String pathToImage) {
         texture = new Texture(pathToImage);
@@ -31,7 +31,11 @@ public class MyAnimation {
         texture.dispose();
     }
 
-    public TextureRegion getKeyFrame(float deltaTime) {
-        return animation.getKeyFrame(deltaTime);
+    public TextureRegion getFrame() {
+        return animation.getKeyFrame(time);
+    }
+
+    public void setTime(float time){
+        this.time += time;
     }
 }
