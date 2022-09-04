@@ -2,45 +2,72 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
-	int clicks = 0;
-	
+	MyAnimation myAnimation;
+	int borderLeft;
+	int borderRight;
+	int stepX;
+	boolean direction;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("gift.png");
+		myAnimation = new MyAnimation("sprites.png");
+		borderRight = Gdx.graphics.getWidth() - myAnimation.getFrame().getRegionWidth();
+		borderLeft = myAnimation.getFrame().getRegionWidth() / 2;
+		direction = true;
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 1, 1, 1);
-
-		float x = Gdx.input.getX()- img.getWidth()/2f;
-		float y = Gdx.graphics.getHeight() - Gdx.input.getY()- img.getHeight()/2f;
-
 		batch.begin();
-
-		if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-			clicks +=1;
-		}
-		String text = "Вы нажали левую кнопку мыши " + clicks + " раз!";
-		Gdx.graphics.setTitle(text);
-
-		batch.draw(img, x, y);
-
+		myAnimation.setTime(Gdx.graphics.getDeltaTime());
+		TextureRegion textureRegion = myAnimation.getFrame();
+		batch.draw(textureRegion, addStepX(textureRegion) ,0);
 		batch.end();
 	}
-	
+
+	private int addStepX(TextureRegion textureRegion) {
+		flip(textureRegion);
+		checkBorder();
+
+		if (stepX <= borderRight && direction){
+			stepX++;
+		}else if (stepX <= borderRight && !direction) {
+		 	stepX--;
+		}
+
+		return stepX;
+	}
+
+	private void checkBorder() {
+		if(stepX == borderRight){
+			direction = false;
+		}
+		if(stepX == borderLeft){
+			direction = true;
+		}
+	}
+
+	private void flip(TextureRegion textureRegion) {
+		if(direction){
+			if(!textureRegion.isFlipX()) {
+				textureRegion.flip(true,false);}
+		}else {
+			if(textureRegion.isFlipX()) {
+				textureRegion.flip(true,false);}
+		}
+	}
+
 	@Override
-	public void dispose () {
+	public void dispose(){
 		batch.dispose();
-		img.dispose();
+		myAnimation.dispose();
 	}
 }
